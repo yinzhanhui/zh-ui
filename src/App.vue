@@ -20,7 +20,7 @@ import Menu from './components/menu/index.vue';
   display: flex;
   .left {
     width: 200px;
-    // box-shadow: 2px 0px 2px 1px #cfcdcd33;
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
   }
   .center {
     flex: 1;
@@ -28,7 +28,7 @@ import Menu from './components/menu/index.vue';
   }
   .right {
     width: 150px;
-    // background-color: aqua;
+    // background-color: lightgray;
   }
 }
 </style>

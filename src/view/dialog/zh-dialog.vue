@@ -1,27 +1,31 @@
 <template>
-  <transition name="dialog-fade">
-    <div class="zh-dialog__wrapper" v-show="modelValue">
-      <!-- <div class="zh-dialog__wrapper" v-show="modelValue" @click.self="handleCloseDialog"> -->
-      <div ref="dialog" class="zh-dialog" :style="initStyle">
-        <div ref="dialogHeader" class="zh-dialog__header">
-          <slot name="title">
-            <span class="zh-dialog__title">{{ title }}</span>
-          </slot>
+  <!-- 加入动画后出现bug：
+    1.当拖拽或拉伸后，点击关闭弹窗，会突然闪回初识弹窗状态，再关闭
+    2.关闭动画后，则不会发生
+  -->
+  <!-- <transition name="dialog-fade"> -->
+  <div class="zh-dialog__wrapper" v-show="modelValue">
+    <!-- <div class="zh-dialog__wrapper" v-show="modelValue" @click.self="handleCloseDialog"> -->
+    <div ref="dialog" class="zh-dialog" :style="initStyle">
+      <div ref="dialogHeader" class="zh-dialog__header">
+        <slot name="title">
+          <span class="zh-dialog__title">{{ title }}</span>
+        </slot>
 
-          <button class="zh-dialog__headerbtn" @click="handleCloseDialog">
-            <i class="zh-icon zh-icon-close"></i>
-          </button>
-        </div>
-        <div class="zh-dialog__body">
-          <!-- 默认插槽 -->
-          <slot></slot>
-        </div>
-        <div class="zh-dialog__footer" v-if="$slots.footer">
-          <slot name="footer"></slot>
-        </div>
+        <button class="zh-dialog__headerbtn" @click="handleCloseDialog">
+          <i class="zh-icon zh-icon-close"></i>
+        </button>
+      </div>
+      <div class="zh-dialog__body">
+        <!-- 默认插槽 -->
+        <slot></slot>
+      </div>
+      <div class="zh-dialog__footer" v-if="$slots.footer">
+        <slot name="footer"></slot>
       </div>
     </div>
-  </transition>
+  </div>
+  <!-- </transition> -->
 </template>
 
 <script setup>

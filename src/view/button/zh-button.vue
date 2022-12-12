@@ -7,12 +7,13 @@
       { 'is-round': round },
       { 'is-circle': circle },
       { 'is-disabled': disabled },
+      { 'is-text': text },
+      { 'is-link': link },
     ]"
     :disabled="disabled"
     @click="handleClick"
   >
     <span>
-      <!-- <i class="zh-icon" :class="[`zh-icon-${icon}`]"></i> -->
       <slot></slot>
     </span>
   </button>
@@ -39,6 +40,14 @@ const props = defineProps({
     default: false,
   },
   disabled: {
+    type: Boolean,
+    default: false,
+  },
+  text: {
+    type: Boolean,
+    default: false,
+  },
+  link: {
     type: Boolean,
     default: false,
   },
@@ -94,6 +103,11 @@ function handleClick() {
   border-radius: 50%;
   padding: 12px;
 }
+.zh-button.is-text {
+  border: 0 solid transparent;
+  padding: 12px;
+}
+
 .zh-button--primary {
   color: #fff;
   background-color: #409eff;
@@ -214,6 +228,54 @@ function handleClick() {
     background: #f56c6c;
     border-color: #f56c6c;
     color: #fff;
+  }
+}
+
+// 链接类型的按钮
+.zh-button.is-link {
+  border: 0 solid transparent;
+  background-color: transparent;
+  &:hover,
+  &:focus {
+    background: transparent;
+    // border-color: #409eff;
+    color: #409eff;
+  }
+}
+.zh-button--primary.is-link {
+  color: #409eff;
+  &:hover,
+  &:focus {
+    color: #a0cfff;
+  }
+}
+.zh-button--success.is-link {
+  color: #67c23a;
+  &:hover,
+  &:focus {
+    color: #b3e19d;
+  }
+}
+
+.zh-button--info.is-link {
+  color: #909399;
+  &:hover,
+  &:focus {
+    color: #c8c9cc;
+  }
+}
+.zh-button--warning.is-link {
+  color: #e6a23c;
+  &:hover,
+  &:focus {
+    color: #f3d19e;
+  }
+}
+.zh-button--danger.is-link {
+  color: #f56c6c;
+  &:hover,
+  &:focus {
+    color: #fab6b6;
   }
 }
 

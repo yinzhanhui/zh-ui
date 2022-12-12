@@ -120,3 +120,14 @@ body {
   width: 100%;
   height: 100%;
 }
+
+/* 全局样式 */
+.demo {
+  margin: 10px;
+}
+
+.demo .demo-row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}

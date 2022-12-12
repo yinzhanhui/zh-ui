@@ -46,26 +46,44 @@
         <div>拖拽和伸缩后，可以保留尺寸和位置</div>
       </zh-dialog>
     </div>
+
+    <div class="demo-row">
+      <zh-button type="primary" @click="visible7 = true">容纳任意元素</zh-button>
+      <zh-dialog v-model="visible7" title="容纳任意元素" draggable resizable keepSizeAndPosition>
+        <zh-collapse-demo></zh-collapse-demo>
+        <!-- <zh-collapse v-model="isExpand" width="600px" collapseHeight="100px">
+          <zh-list>
+            <div v-for="(item, index) in items" :key="item" class="item">
+              <div class="item-content">{{ item }}</div>
+              <zh-button @click="handleAdd(index)" class="btn" type="primary">添加</zh-button>
+              <zh-button @click="handleDel(index)" class="btn" type="danger">删除</zh-button>
+              <zh-button @click="handleRandom" class="btn" type="warning">打乱</zh-button>
+            </div>
+          </zh-list>
+        </zh-collapse> -->
+      </zh-dialog>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, reactive } from 'vue';
+import ZhCollapse from '../collapse/zh-collapse.vue';
+import ZhCollapseDemo from '../collapse/index.vue';
+import ZhList from '../list/zh-list.vue';
+
 const visible1 = ref(false);
 const visible2 = ref(false);
 const visible3 = ref(false);
 const visible4 = ref(false);
 const visible5 = ref(false);
 const visible6 = ref(false);
+const visible7 = ref(false);
 </script>
 
 <style lang="scss" scoped>
 .demo {
-  margin: 10px;
   .demo-row {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
     .zh-button {
       margin-right: 10px;
     }

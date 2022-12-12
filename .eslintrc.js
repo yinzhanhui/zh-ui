@@ -21,6 +21,8 @@ module.exports = {
     'no-shadow': 'off',
     'no-param-reassign': 'off',
     'prefer-arrow-callback': 'off',
+    'no-control-regex': 0,
+    'comma-dangle': 'off',
     'no-unused-vars': ['error', { varsIgnorePattern: '.*', args: 'none' }],
   },
   globals: {
