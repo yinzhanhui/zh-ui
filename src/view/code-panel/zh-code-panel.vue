@@ -8,13 +8,13 @@
         <zh-button circle link name="测试" @click="setting">
           <i class="zh-icon zh-icon-setting"></i>
         </zh-button>
-        <zh-button circle link name="笔记" @click="note">
+        <zh-button circle link name="笔记" @click="handleHighlight">
           <i class="zh-icon zh-icon-edit"></i>
         </zh-button>
-        <zh-button circle link name="格式化" @click="format">
+        <zh-button circle link name="格式化" @click="handleFormat">
           <i class="zh-icon zh-icon-finished"></i>
         </zh-button>
-        <zh-button circle link name="复制" @click="copy">
+        <zh-button circle link name="复制" @click="handleCopy">
           <i class="zh-icon zh-icon-copy-document"></i>
         </zh-button>
       </div>
@@ -44,9 +44,15 @@ import { reactive, ref, defineProps, defineEmits, shallowRef, onMounted } from '
 import { Codemirror } from 'vue-codemirror';
 import { javascript } from '@codemirror/lang-javascript';
 import { oneDark } from '@codemirror/theme-one-dark';
-import beautify from 'js-beautify';
 import ZhCollapseButton from '@/view/interactive-button/zh-collapse-button.vue';
 import ZhCollapse from '@/view/collapse/zh-collapse.vue';
+import useHighlight from './hooks/useHighlight';
+import useFormat from './hooks/useFormat';
+
+// 高亮hooks
+const highlight = useHighlight();
+// 格式化hooks
+const format = useFormat();
 
 const props = defineProps({
   height: {
@@ -111,7 +117,7 @@ const customOptions = {
   },
 };
 
-const highlightObj = ref(null);
+// const highlightObj = ref(null);
 
 function handleReady(payload) {
   view.value = payload.view;
@@ -133,104 +139,42 @@ function log(...rest) {
   console.log(rest);
 }
 
-// css高亮api
-function highlightApi() {
-  // 获取鼠标划词的开始与结束
-  const range = window.getSelection().getRangeAt(0);
-  console.log(range);
-  const start = {
-    node: range.startContainer,
-    offset: range.startOffset,
-  };
-  const end = {
-    node: range.endContainer,
-    offset: range.endOffset,
-  };
+// // css高亮api
+// function highlightApi() {
+//   // 获取鼠标划词的开始与结束
+//   const range = document.getSelection().getRangeAt(0);
+//   console.log(range);
+//   const start = {
+//     node: range.startContainer,
+//     offset: range.startOffset,
+//   };
+//   const end = {
+//     node: range.endContainer,
+//     offset: range.endOffset,
+//   };
 
-  const r = new Range();
-  r.setStart(start.node, start.offset);
-  r.setEnd(end.node, end.offset);
+//   const r = new Range();
+//   r.setStart(start.node, start.offset);
+//   r.setEnd(end.node, end.offset);
 
-  highlightObj.value.add(r);
+//   highlightObj.value.add(r);
 
-  console.log(start, end, r, highlightObj.value);
-}
+//   console.log(start, end, r, highlightObj.value);
+// }
 
 // 给选中代码添加高亮样式（用于笔记）
-function note() {
-  // getCodemirrorStates().ranges.forEach((item) => {
-  //   // 获取选中的代码
-  //   const selectedCode = primaryCode.slice(item.from, item.to);
-  // });
-  highlightApi();
-}
-
-// 判断代码段类型
-function getCodeType(input) {
-  // 判定一段代码是否为html代码
-  function isHtml(input) {
-    return /<[a-z]+\d?(\s+[\w-]+=("[^"]*"|'[^']*'))*\s*\/?>|&#?\w+;/i.test(input);
-  }
-  // 判断一段代码是否为css代码
-  function isCss(input) {
-    return /^[\.\#]?\w+[^{]+\{[^}]*\}/i.test(input);
-  }
-  if (isHtml(input)) return 'html';
-  if (isCss(input)) return 'css';
-  return 'js';
+function handleHighlight() {
+  // highlightApi();
+  highlight(view.value);
 }
 
 // 格式化代码
-function codeBeautify(code) {
-  let res = code;
-  console.log('code类型：', getCodeType(code));
-  switch (getCodeType(code)) {
-    case 'html':
-      res = beautify.html_beautify(code);
-      break;
-    case 'css':
-      res = beautify.css_beautify(code);
-      break;
-    case 'js':
-      res = beautify.js_beautify(code);
-      break;
-    default:
-      break;
-  }
-  return res;
-}
-
-function setting() {
-  highlightObj.value.forEach((item) => console.log(item));
-}
-
-// 格式化代码
-function format() {
-  // 获取选中的代码
-  let finalCode = '';
-  let start = 0;
-  let end = 0;
-  const primaryCode = code.value;
-  getCodemirrorStates().ranges.forEach((item) => {
-    const { from, to } = item;
-    // 获取未被选中的代码
-    end = from;
-    const noSelectedCode = primaryCode.slice(start, end);
-    start = to;
-    // 获取选中的代码
-    const selectedCode = primaryCode.slice(from, to);
-    // 格式化代码
-    const formattedCode = codeBeautify(selectedCode);
-    // 用格式化后的代码替换原代码
-    finalCode += noSelectedCode + formattedCode;
-  });
-  finalCode += primaryCode.slice(start, primaryCode.length);
-  // 赋值
-  code.value = finalCode;
+function handleFormat() {
+  code.value = format(code, getCodemirrorStates().ranges);
 }
 
 // 复制所有代码到剪切板
-function copy() {
+function handleCopy() {
   navigator.clipboard
     .writeText(code.value)
     .then(() => {
@@ -246,10 +190,15 @@ function handleToggleExpand() {
   isExpand.value = !isExpand.value;
 }
 
-onMounted(() => {
-  highlightObj.value = new Highlight();
-  CSS.highlights.set('highlightText', highlightObj.value);
-});
+function setting() {
+  console.log(view.value);
+}
+
+// css高亮api
+// onMounted(() => {
+//   highlightObj.value = new Highlight();
+//   CSS.highlights.set('highlightText', highlightObj.value);
+// });
 </script>
 
 <style lang="scss" scoped>
@@ -273,9 +222,22 @@ onMounted(() => {
   outline: none;
 }
 
-// css最新文本高亮api
-::v-deep ::highlight(highlightText) {
-  background-color: rgb(255, 255, 0);
-  color: black;
-}
+// // css最新文本高亮api
+// ::v-deep ::highlight(highlightText) {
+//   background-color: rgb(255, 255, 0);
+//   color: black;
+// }
 </style>
+
+<!-- <style lang="scss">
+// highlight样式
+.cm-highlight {
+  background-color: red;
+  color: black;
+
+  // 将highlight下所有元素的color强制改为black
+  [class*='ͼ'] {
+    color: black;
+  }
+}
+</style> -->

@@ -1,0 +1,106 @@
+// 生成三角形
+@mixin arrow($direction: top, $color: black, $size: 6px) {
+  $dire: (
+    top: 'bottom',
+    bottom: 'top',
+    left: 'right',
+    right: 'left',
+  );
+  display: inline-block;
+  width: 0;
+  height: 0;
+  line-height: 0;
+  font-size: 0;
+  overflow: hidden;
+  border-style: solid;
+  border-width: $size;
+  // 三角形的角度计算
+  border-#{map-get($dire, $direction)}-width: $size * 0.64;
+  border-color: transparent;
+  cursor: pointer;
+  border-#{map-get($dire, $direction)}-color: $color;
+  border-#{$direction}: none;
+}
+
+@mixin tooltip($pos: top, $bgcolor: #2d8cf0) {
+  $dire: (
+    top: 'bottom',
+    bottom: 'top',
+    left: 'right',
+    right: 'left',
+  );
+  @if not map-get($dire, $pos) {
+    @error "illegalArgumentException";
+  }
+  & {
+    position: relative;
+  }
+  &:hover {
+    &::before,
+    &::after {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+  &::before {
+    position: absolute;
+    #{$pos}: 0px;
+    @if $pos == 'top' or $pos == 'bottom' {
+      left: 50%;
+      transform: translateX(-50%);
+      margin-#{$pos}: -5px;
+    } @else if $pos == 'left' or $pos == 'right' {
+      top: 50%;
+      transform: translateY(-50%);
+      margin-#{$pos}: -14px;
+    }
+    content: '';
+    @include arrow(#{map-get($dire, $pos)}, $bgcolor);
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.5s;
+  }
+
+  &::after {
+    cursor: pointer;
+    position: absolute;
+    @if $pos == 'top' or $pos == 'bottom' {
+      $y: if($pos == 'top', calc(-100% - 4px), calc(100% + 4px));
+      #{$pos}: 0px;
+      left: 50%;
+      transform: translateX(-50%) translateY($y);
+    } @else if $pos == 'left' or $pos == 'right' {
+      #{map-get($dire, $pos)}: 0px;
+      top: 50%;
+      transform: translateY(-50%);
+      margin-#{map-get($dire, $pos)}: calc(100% + 8px);
+    }
+    max-width: 200px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    content: '取消';
+    color: #fff;
+    font-size: 12px;
+    line-height: 2;
+    padding: 0.2em 2em;
+    border-radius: 2em;
+    background: $bgcolor;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.5s;
+  }
+}
+
+// highlight样式
+.cm-highlight {
+  background-color: red;
+  color: black;
+
+  // 将highlight下所有元素的color强制改为black
+  [class*='ͼ'] {
+    color: black;
+  }
+
+  @include tooltip(top); // 默认是top
+}
